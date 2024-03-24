@@ -1,0 +1,66 @@
+﻿@model ContributionViewModel
+
+<div class="header">
+    <h1>
+        Contributors for the @Model.SimchaName
+    </h1>
+</div>
+
+<div class="table-responsive">
+    <form method="POST" action="/home/updatecontributions">
+        <input type="hidden" name="simchaId" value="@Model.SimchaId" />
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Contribute</th>
+                    <th>Name</th>
+                    <th>Balance</th>
+                    <th>Always Include</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Contributors.Count; i++)
+                {
+                    <input type="hidden" name="contributions[@i].ContributorId" value="@Model.Contributors[@i].Id" />
+                    <tr>
+                        <td>
+                            <div class="d-flex justify-content-center">
+                                <div class="form-check form-switch">
+                                    @if (Model.Contributions.Any(c => c.ContributorId == Model.Contributors[i].Id))
+                                    {
+                                        <input style="width: 4rem; height: 2rem;" name="contributions[@i].Include" checked class="form-check-input" type="checkbox" value="true">
+
+                                    }
+                                    else
+                                    {
+                                        <input style="width: 4rem; height: 2rem;" name="contributions[@i].Include" class="form-check-input" type="checkbox" value="true">
+                                    }
+                                    
+                                </div>
+                            </div>
+                        </td>
+                        <td>@Model.Contributors[@i].FirstName @Model.Contributors[@i].LastName</td>
+                        <td>@Model.Contributors[@i].Balance</td>
+                        <td style="text-align: center;">
+                            <i style="font-size:30px" class="bi bi-@(@Model.Contributors[@i].AlwaysInclude ? "check" : "x")"></i>
+                        </td>
+                        <td>
+                            @if(Model.Contributions.FirstOrDefault(c => c.ContributorId == Model.Contributors[i].Id) != default)
+                            {
+                                <input type="text" name="contributions[@i].amount" class="form-control" value="@Model.Contributions.First(c => c.ContributorId == Model.Contributors[i].Id).Amount" />
+                            }
+                            else
+                            {
+                                <input type="text" name="contributions[@i].amount" class="form-control" value="5" />
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div style="text-align:center;">
+            <button class="btn-lg btn-danger">Update</button>
+        </div>
+        </form>
+</div>
